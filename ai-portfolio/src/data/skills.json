@@ -1,0 +1,16 @@
+{
+  "services": [
+    { "title": "Front-End Development", "technologies": ["React", "TypeScript", "Tailwind", "UI/UX"] },
+    { "title": "Back-End Development", "technologies": ["Node.js", "Express", "PHP", "Python", "C++", "Java"] },
+    { "title": "Full Stack Frameworks", "technologies": ["MERN Stack"] },
+    { "title": "AI/ML", "technologies": ["PyTorch", "TensorFlow basics", "Computer Vision"] },
+    { "title": "Embedded Systems", "technologies": ["Arduino", "IoT", "Sensor integration"] },
+    { "title": "Database", "technologies": ["MongoDB", "SQL"] },
+    { "title": "3D & Graphics", "technologies": ["Three.js", "Motion graphics"] },
+    { "title": "Entrepreneurship", "technologies": ["Startup building", "Business strategy"] }
+  ],
+  "technologies": [
+    "HTML", "CSS", "JavaScript", "TypeScript", "React", "Redux", "Tailwind",
+    "Node.js", "MongoDB", "Python", "SQL", "Three.js", "Git", "Android"
+  ]
+}

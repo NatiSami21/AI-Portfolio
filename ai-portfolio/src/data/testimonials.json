@@ -1,0 +1,19 @@
+{
+  "testimonials": [
+    {
+      "testimonial": "The Wolayita Zone Science and IT Web-App improved our tech maintenance workflows with an intuitive system. Excellent work!",
+      "name": "Mr. Netsanet",
+      "company": "Wolayita Zone Science and IT Office"
+    },
+    {
+      "testimonial": "The St. Mary Finance System transformed how we manage parish finances. Reliable, secure, and efficient.",
+      "name": "Dn. Zenebe",
+      "company": "St. Mary Church Parish Council"
+    },
+    {
+      "testimonial": "Wa-Leba+ provided us with real-time monitoring and improved security. Very impressive delivery.",
+      "name": "Mr. Samuel",
+      "company": "Sami Computer Center"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "natinael samuel": ["nati", "natinael", "nat", "samu"],
+  "mern": ["mern", "mongo", "mongodb", "node", "express", "react"],
+  "databases": ["database", "databases", "db", "mongodb", "sql", "mysql"],
+  "frontend": ["frontend", "ui", "react", "tailwind", "typescript", "next"],
+  "ci/cd": ["ci", "cd", "ci/cd", "pipeline", "deployment"],
+  "ai": ["ai", "ml", "machine learning", "computer vision", "tensorflow", "pytorch"]
+}

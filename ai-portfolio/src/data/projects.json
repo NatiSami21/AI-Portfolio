@@ -1,0 +1,31 @@
+{
+  "projects": [
+    {
+      "name": "MedHub Ethiopia",
+      "description": "First EMR in Ethiopia, streamlining patient management and ID verification.",
+      "technologies": ["MERN", "WebRTC", "Tailwind"],
+      "problems_solved": ["Fragmented healthcare data", "Manual patient record keeping"],
+      "lessons_gained": ["Healthcare-grade software", "WebRTC integration"],
+      "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1751727664/medhub_anevus.mp4",
+      "source_code_link": "https://medhub-ethiopia.up.railway.app"
+    },
+    {
+      "name": "MyFayda eKYC",
+      "description": "Digital ID solution enabling secure verification with Fayda National ID.",
+      "technologies": ["MERN", "Tailwind"],
+      "problems_solved": ["Trusted eKYC for Ethiopia", "Identity fraud prevention"],
+      "lessons_gained": ["National-scale integration", "Security-first design"],
+      "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1751726687/myfayda_o522lb.mp4",
+      "source_code_link": "https://myfayda.org"
+    },
+    {
+      "name": "WZSIT WebApp",
+      "description": "Tech support platform for Wolayita Zone with real-time consultation.",
+      "technologies": ["MERN", "WebRTC"],
+      "problems_solved": ["Lack of digital support systems"],
+      "lessons_gained": ["Remote-first solutions", "Scaling WebRTC apps"],
+      "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1732028716/WZSIT_port_u9uvk9.mp4",
+      "source_code_link": "https://wolaita-sit.up.railway.app"
+    }
+  ]
+}
