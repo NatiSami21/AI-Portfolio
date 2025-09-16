@@ -1,0 +1,121 @@
+[
+  {
+    "name": "MyFayda eKYC",
+    "description": "SignUp With Fayda ID: MyFayda eKYC is a digital identity solution integrating with the Fayda National ID system, empowering users to securely verify their identities. Supports trusted digital services for Ethiopia's growing digital economy.",
+    "tags": [
+      { "name": "MERN Stack", "color": "text-white" },
+      { "name": "Tailwind CSS", "color": "text-gray-100" },
+      { "name": "JWT", "color": "text-gray-200" }
+    ],
+    "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1751726687/myfayda_o522lb.mp4",
+    "source_code_link": "https://myfayda.org"
+  },
+  {
+    "name": "MedHub Ethiopia",
+    "description": "The first Electronic Medical Record (EMR) system in Ethiopia, designed for healthcare providers. Integrates with national ID for seamless patient verification and improves workflow efficiency and healthcare delivery.",
+    "tags": [
+      { "name": "MERN Stack", "color": "text-white" },
+      { "name": "WebRTC", "color": "text-gray-200" },
+      { "name": "Tailwind CSS", "color": "text-gray-100" },
+      { "name": "MongoDB", "color": "text-gray-300" }
+    ],
+    "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1751727664/medhub_anevus.mp4",
+    "source_code_link": "https://medhub-ethiopia.up.railway.app"
+  },
+  {
+    "name": "WZSIT Web-App",
+    "description": "Comprehensive tech support platform for Wolayita Zone, including online appointments, video consultations, and real-time troubleshooting guides. Designed to streamline technical assistance for local users.",
+    "tags": [
+      { "name": "MERN Stack", "color": "text-white" },
+      { "name": "WebRTC", "color": "text-gray-200" },
+      { "name": "Tailwind CSS", "color": "text-gray-100" }
+    ],
+    "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1732028716/WZSIT_port_u9uvk9.mp4",
+    "source_code_link": "https://wolaita-sit.up.railway.app"
+  },
+  {
+    "name": "St. Mary Finance Management System",
+    "description": "Cloud-based finance system for parish operations. Automates accounting, enhances audit efficiency, and ensures transparency in financial decisions.",
+    "tags": [
+      { "name": "PHP", "color": "text-white" },
+      { "name": "SQL", "color": "text-gray-200" },
+      { "name": "JavaScript", "color": "text-gray-100" },
+      { "name": "Chart.js", "color": "text-gray-50" }
+    ],
+    "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1732028367/St_marry_Port_lht9wd.mp4",
+    "source_code_link": "https://st-marry-finance-system.great-site.net"
+  },
+  {
+    "name": "Wa-Leba+ AI Surveillance SaaS",
+    "description": "AI-driven SaaS platform integrating IP cameras with machine learning for real-time intrusion detection, trespassing alerts, and customer traffic analytics. Scalable for national security applications.",
+    "tags": [
+      { "name": "Python", "color": "text-white" },
+      { "name": "TensorFlow", "color": "text-gray-200" },
+      { "name": "OpenCV", "color": "text-gray-100" },
+      { "name": "Node.js", "color": "text-gray-50" },
+      { "name": "Docker", "color": "text-gray-300" }
+    ],
+    "media": "workIcon6",
+    "source_code_link": "contact"
+  },
+  {
+    "name": "Offline Book Store App",
+    "description": "Mobile app for offline access to textbooks, practice tests, and study materials for software engineering students. Reduces dependency on internet connectivity and improves study efficiency.",
+    "tags": [
+      { "name": "Java", "color": "text-white" },
+      { "name": "Kotlin", "color": "text-gray-200" },
+      { "name": "SQLite", "color": "text-gray-100" }
+    ],
+    "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1732028313/SwBs_p05udc.mp4",
+    "source_code_link": "https://drive.google.com/file/d/16J_LNM1ko-UKzlqQFYln2vV1IKH04W5r/view?usp=sharing"
+  },
+  {
+    "name": "Bible Trivia Game",
+    "description": "Desktop trivia game for Sunday school students, providing an interactive and educational experience. Supports limited resources and simple UI for maximum engagement.",
+    "tags": [
+      { "name": "Python", "color": "text-white" },
+      { "name": "PyQt5", "color": "text-gray-200" },
+      { "name": "JSON", "color": "text-gray-100" }
+    ],
+    "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1732028102/msk_Port_haqqjs.mp4",
+    "source_code_link": "https://drive.google.com/file/d/1YisrB_JshbSS2R2PXCVDmIZnjU7jn16_/view?usp=sharing"
+  },
+  {
+    "name": "Vehicle Management System (Prototype)",
+    "description": "Fleet management segment for a client. Includes vehicle tracking, maintenance scheduling, and driver authentication, built using MERN stack.",
+    "tags": [
+      { "name": "React.js", "color": "text-white" },
+      { "name": "Node.js", "color": "text-gray-200" },
+      { "name": "Express.js", "color": "text-gray-100" },
+      { "name": "MongoDB", "color": "text-gray-200" },
+      { "name": "JWT", "color": "text-white" }
+    ],
+    "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1738911660/VMS-port_suyfmx.mp4",
+    "source_code_link": "https://vm.up.railway.app/"
+  },
+  {
+    "name": "AI Chatbot Platform",
+    "description": "Enterprise-grade AI chatbot with natural language processing for customer support automation. Integrates with multiple platforms and provides analytics for user interaction.",
+    "tags": [
+      { "name": "Node.js", "color": "text-white" },
+      { "name": "Python", "color": "text-gray-200" },
+      { "name": "TensorFlow", "color": "text-gray-100" },
+      { "name": "MongoDB", "color": "text-gray-50" },
+      { "name": "REST API", "color": "text-gray-300" }
+    ],
+    "media": "https://example.com/ai-chatbot-demo.mp4",
+    "source_code_link": "https://github.com/natinael/ai-chatbot"
+  },
+  {
+    "name": "E-commerce MERN Clone",
+    "description": "A full-stack clone of a popular e-commerce platform for learning and prototyping purposes. Implements product catalog, user authentication, payment integration, and admin panel.",
+    "tags": [
+      { "name": "MERN Stack", "color": "text-white" },
+      { "name": "Redux Toolkit", "color": "text-gray-200" },
+      { "name": "Tailwind CSS", "color": "text-gray-100" },
+      { "name": "Stripe API", "color": "text-gray-50" }
+    ],
+    "media": "https://example.com/ecommerce-demo.mp4",
+    "source_code_link": "https://github.com/natinael/mern-ecommerce-clone"
+  }
+]

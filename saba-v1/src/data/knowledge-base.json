@@ -1,0 +1,145 @@
+{
+  "bio": {
+    "name": "Natinael Samuel",
+    "role": "Full Stack Developer & Entrepreneur",
+    "experience_level": "Mid-Senior",
+    "summary": "A versatile full-stack software engineer with 5+ years of experience building web applications, SaaS platforms, AI solutions, and embedded systems. Skilled in frontend and backend technologies, database management, project management, and entrepreneurship. Founder of Diguwa-Store and Diguwa-Soft, leading multiple innovative projects in Ethiopia.",
+    "contact": {
+      "email": "afritioalberts1216@gmail.com",
+      "location": "Addis Ababa, Ethiopia",
+      "linkedIn": "https://www.linkedin.com/in/natinaelsamuel",
+      "github": "https://github.com/natisami21"
+    }
+  },
+  "skills": [
+    {"name": "HTML5", "type": "frontend"},
+    {"name": "CSS3", "type": "frontend"},
+    {"name": "JavaScript", "type": "frontend"},
+    {"name": "TypeScript", "type": "frontend"},
+    {"name": "ReactJS", "type": "frontend"},
+    {"name": "Redux Toolkit", "type": "frontend"},
+    {"name": "Tailwind CSS", "type": "frontend"},
+    {"name": "NodeJS", "type": "backend"},
+    {"name": "ExpressJS", "type": "backend"},
+    {"name": "MongoDB", "type": "database"},
+    {"name": "SQL (MySQL, PostgreSQL)", "type": "database"},
+    {"name": "Python", "type": "backend"},
+    {"name": "Three.js", "type": "graphics"},
+    {"name": "Docker", "type": "devops"},
+    {"name": "JWT", "type": "security"},
+    {"name": "OAuth2", "type": "security"},
+    {"name": "WebRTC", "type": "realtime communication"},
+    {"name": "Arduino & IoT", "type": "embedded"},
+    {"name": "PyTorch & TensorFlow", "type": "AI/ML"},
+    {"name": "Requirements Engineering", "type": "management"},
+    {"name": "CI/CD", "type": "devops"},
+    {"name": "Project Management", "type": "management"},
+    {"name": "Entrepreneurship & Marketing", "type": "business"}
+  ],
+  "projects": [
+    {
+      "name": "MyFayda eKYC",
+      "description": "Digital identity solution integrated with the Fayda National ID system in Ethiopia. Secures user identities and enables trusted digital services.",
+      "tags": ["MERN Stack", "Tailwind CSS", "Authentication"],
+      "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1751726687/myfayda_o522lb.mp4",
+      "link": "https://myfayda.org"
+    },
+    {
+      "name": "MedHub Ethiopia",
+      "description": "First EMR system in Ethiopia, streamlining patient management and integrating with national ID.",
+      "tags": ["MERN Stack", "WebRTC", "Tailwind CSS"],
+      "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1751727664/medhub_anevus.mp4",
+      "link": "https://medhub-ethiopia.up.railway.app"
+    },
+    {
+      "name": "WZSIT-WebApp",
+      "description": "Tech support platform for Wolayita Zone integrating online appointments, real-time video consultations, and technical resources.",
+      "tags": ["MERN Stack", "WebRTC", "Tailwind CSS"],
+      "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1732028716/WZSIT_port_u9uvk9.mp4",
+      "link": "https://wolaita-sit.up.railway.app"
+    },
+    {
+      "name": "St. Mary Finance Management System",
+      "description": "Cloud-based finance system automating accounting, reporting, and audits for parish operations.",
+      "tags": ["PHP", "SQL", "JavaScript", "Chart.js"],
+      "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1732028367/St_marry_Port_lht9wd.mp4",
+      "link": "https://st-marry-finance-system.great-site.net"
+    },
+    {
+      "name": "Wa-Leba & Wa-Leba+",
+      "description": "AI-driven business surveillance SaaS platform with intruder detection, trespassing alerts, and national-level security integration.",
+      "tags": ["Python", "Node.js", "React.js", "TensorFlow", "Computer Vision", "MongoDB", "Docker"],
+      "media": "",
+      "link": "contact"
+    },
+    {
+      "name": "Offline Book Store App",
+      "description": "Offline mobile app compiling textbooks and study resources for university students.",
+      "tags": ["Java", "Kotlin"],
+      "media": "https://res.cloudinary.com/dnsnj1z1g/video/upload/v1732028313/SwBs_p05udc.mp4",
+      "link": "https://drive.google.com/file/d/16J_LNM1ko-UKzlqQFYln2vV1IKH04W5r/view?usp=sharing"
+    }
+  ],
+  "experiences": [
+    {
+      "role": "Founder & Developer",
+      "company": "Diguwa-Store",
+      "duration": "Feb 2022",
+      "details": [
+        "Started a dorm service platform connecting students to local businesses.",
+        "Scaled to 80+ daily visitors and revenue of 5,500 ETB in 2 months."
+      ]
+    },
+    {
+      "role": "Full Stack Developer",
+      "company": "EOTC Wolayita Diocese",
+      "duration": "Feb 2023",
+      "details": ["Developed cloud-based finance system and managed SQL architecture."]
+    },
+    {
+      "role": "Founder & Lead Developer",
+      "company": "Diguwa-Soft",
+      "duration": "Nov 2023 - Present",
+      "details": [
+        "Accepted third-party projects.",
+        "Developed expertise in AI, computer vision, and Three.js.",
+        "Led MedHub Ethiopia and other SaaS solutions."
+      ]
+    }
+  ],
+  "services": [
+    "Front-End Development",
+    "Back-End Development",
+    "Full Stack Development",
+    "AI & Machine Learning",
+    "Embedded Systems",
+    "Database Management",
+    "Graphics & 3D Modeling",
+    "Requirements Engineering",
+    "Entrepreneurship & Marketing",
+    "Cloning Solutions"
+  ],
+  "testimonials": [
+    {
+      "author": "Mr.Netsanet",
+      "designation": "Director",
+      "company": "Wolayita Zone Science and IT Office",
+      "feedback": "The WZSIT-WebApp has greatly improved our tech maintenance processes. User-friendly and simplified our work.",
+      "media": "tstm1"
+    },
+    {
+      "author": "Dn. Zenebe",
+      "designation": "Finance Head",
+      "company": "St. Mary Church Parish Council",
+      "feedback": "St. Mary Finance Management System has transformed how we handle finances efficiently.",
+      "media": "tstm2"
+    },
+    {
+      "author": "Mr. Samuel",
+      "designation": "Owner",
+      "company": "Sami Computer Center",
+      "feedback": "Wa-Leba+ provides peace of mind with real-time monitoring and ease of use.",
+      "media": "tstm3"
+    }
+  ]
+}

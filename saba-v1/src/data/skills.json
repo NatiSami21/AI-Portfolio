@@ -1,0 +1,128 @@
+[
+  {
+    "name": "HTML 5",
+    "category": "Frontend",
+    "proficiency": "Expert",
+    "tools": []
+  },
+  {
+    "name": "CSS 3",
+    "category": "Frontend",
+    "proficiency": "Expert",
+    "tools": ["Tailwind CSS", "Sass"]
+  },
+  {
+    "name": "JavaScript",
+    "category": "Frontend",
+    "proficiency": "Expert",
+    "tools": ["React", "Redux Toolkit", "Node.js"]
+  },
+  {
+    "name": "TypeScript",
+    "category": "Frontend",
+    "proficiency": "Advanced",
+    "tools": ["React", "Node.js", "Next.js"]
+  },
+  {
+    "name": "React JS",
+    "category": "Frontend",
+    "proficiency": "Expert",
+    "tools": ["Redux", "React Query", "Tailwind CSS"]
+  },
+  {
+    "name": "Redux Toolkit",
+    "category": "Frontend",
+    "proficiency": "Advanced",
+    "tools": ["React JS"]
+  },
+  {
+    "name": "Node.js",
+    "category": "Backend",
+    "proficiency": "Expert",
+    "tools": ["Express.js", "Nest.js"]
+  },
+  {
+    "name": "Python",
+    "category": "Backend / AI",
+    "proficiency": "Advanced",
+    "tools": ["Flask", "Django", "PyTorch", "TensorFlow"]
+  },
+  {
+    "name": "PHP",
+    "category": "Backend",
+    "proficiency": "Intermediate",
+    "tools": ["Laravel"]
+  },
+  {
+    "name": "Java",
+    "category": "Backend / Mobile",
+    "proficiency": "Intermediate",
+    "tools": ["Android Studio"]
+  },
+  {
+    "name": "Kotlin",
+    "category": "Mobile",
+    "proficiency": "Intermediate",
+    "tools": ["Android Studio"]
+  },
+  {
+    "name": "MongoDB",
+    "category": "Database",
+    "proficiency": "Expert",
+    "tools": ["Mongoose", "Aggregation Pipeline"]
+  },
+  {
+    "name": "SQL / MySQL",
+    "category": "Database",
+    "proficiency": "Advanced",
+    "tools": ["PostgreSQL", "SQLite"]
+  },
+  {
+    "name": "Git & GitHub",
+    "category": "DevOps / Tools",
+    "proficiency": "Expert",
+    "tools": ["GitLab", "Bitbucket"]
+  },
+  {
+    "name": "Docker",
+    "category": "DevOps",
+    "proficiency": "Intermediate",
+    "tools": []
+  },
+  {
+    "name": "WebRTC",
+    "category": "Realtime Communication",
+    "proficiency": "Advanced",
+    "tools": ["React", "Node.js"]
+  },
+  {
+    "name": "Three.js",
+    "category": "3D Graphics",
+    "proficiency": "Intermediate",
+    "tools": []
+  },
+  {
+    "name": "Embedded Systems",
+    "category": "Hardware / IoT",
+    "proficiency": "Intermediate",
+    "tools": ["Arduino", "Raspberry Pi", "Sensors"]
+  },
+  {
+    "name": "AI & Machine Learning",
+    "category": "AI / ML",
+    "proficiency": "Advanced",
+    "tools": ["PyTorch", "TensorFlow", "Computer Vision", "YOLO", "ConvLSTM"]
+  },
+  {
+    "name": "Requirements Engineering",
+    "category": "Soft / Management",
+    "proficiency": "Expert",
+    "tools": ["SRS Documentation", "Stakeholder Interviews"]
+  },
+  {
+    "name": "Entrepreneurship & Business",
+    "category": "Soft / Management",
+    "proficiency": "Advanced",
+    "tools": ["Startup Management", "Marketing", "Financial Operations"]
+  }
+]

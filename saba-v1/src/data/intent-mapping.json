@@ -1,0 +1,57 @@
+{
+  "about": {
+    "description": "User asks about background, education, career journey, or summary.",
+    "keywords": ["about", "background", "who are you", "your story", "bio", "education", "career"],
+    "responseFrom": ["bio.json"]
+  },
+  "skills": {
+    "description": "User asks about technical skills, tools, frameworks, or expertise.",
+    "keywords": ["skills", "tech stack", "technologies", "languages", "frameworks", "what do you know", "tools"],
+    "responseFrom": ["skills.json", "knowledge-base.json"]
+  },
+  "projects": {
+    "description": "User asks about previous works, apps, systems, or contributions.",
+    "keywords": ["projects", "portfolio", "apps", "systems", "what have you built", "past work"],
+    "responseFrom": ["projects.json"]
+  },
+  "experience": {
+    "description": "User asks about work history, roles, responsibilities, or internships.",
+    "keywords": ["experience", "work history", "career", "roles", "internship", "companies"],
+    "responseFrom": ["bio.json", "knowledge-base.json"]
+  },
+  "testimonials": {
+    "description": "User asks for recommendations, feedback, or client comments.",
+    "keywords": ["recommendations", "testimonials", "feedback", "reviews", "what others say"],
+    "responseFrom": ["testimonials.json"]
+  },
+  "achievements": {
+    "description": "User asks about awards, competitions, recognitions, or milestones.",
+    "keywords": ["achievements", "awards", "competitions", "milestones", "recognition"],
+    "responseFrom": ["bio.json", "knowledge-base.json"]
+  },
+  "entrepreneurship": {
+    "description": "User asks about startups, leadership, innovation, or business involvement.",
+    "keywords": ["entrepreneurship", "startup", "founder", "business", "company", "innovation"],
+    "responseFrom": ["projects.json", "bio.json"]
+  },
+  "ai_ml": {
+    "description": "User asks about machine learning, AI, or data science expertise.",
+    "keywords": ["AI", "machine learning", "deep learning", "ML", "computer vision", "PyTorch", "TensorFlow"],
+    "responseFrom": ["skills.json", "projects.json", "knowledge-base.json"]
+  },
+  "embedded_systems": {
+    "description": "User asks about IoT, Arduino, microcontrollers, or hardware projects.",
+    "keywords": ["embedded", "Arduino", "IoT", "microcontroller", "sensors", "hardware"],
+    "responseFrom": ["projects.json", "skills.json"]
+  },
+  "marketing_business": {
+    "description": "User asks about business side, marketing, or dual expertise.",
+    "keywords": ["business", "marketing", "management", "dual degree", "entrepreneurship"],
+    "responseFrom": ["bio.json", "knowledge-base.json"]
+  },
+  "general_help": {
+    "description": "Fallback for generic or unclear queries.",
+    "keywords": ["help", "what can you do", "assistant", "support"],
+    "responseFrom": ["knowledge-base.json"]
+  }
+}

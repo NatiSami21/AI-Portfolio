@@ -1,0 +1,45 @@
+{
+  "name": "Natinael Samuel",
+  "title": "Full Stack Software Engineer | Startup Founder",
+  "location": "Addis Ababa, Ethiopia",
+  "email": "afritioalberts1216@gmail.com",
+  "education": [
+    {
+      "degree": "B.Sc. in Software Engineering",
+      "institution": "Wachemo University",
+      "year": "2025",
+      "cgpa": "3.6"
+    },
+    {
+      "degree": "B.A. in Marketing Management",
+      "institution": "Wachemo University",
+      "year": "2025"
+    }
+  ],
+  "summary": "Full stack developer with expertise in MERN stack, distributed systems, machine learning, and embedded systems. Experienced in building real-world solutions across fintech, healthcare, security, and ed-tech. Founder of Diguwa-Store and Diguwa-Soft, combining technical and entrepreneurial acumen. Skilled at scaling projects from prototype to production, with hands-on leadership in startup and institutional environments.",
+  "experience_years": 4,
+  "strengths": [
+    "Problem-solving with real-world applications",
+    "End-to-end product development",
+    "Strong grasp of databases, APIs, and scalable architectures",
+    "Leadership in startup environments",
+    "Cross-disciplinary knowledge (tech + business)"
+  ],
+  "languages": [
+    "English (Professional)",
+    "Amharic (Native)",
+    "Wolaytta (Fluent)"
+  ],
+  "certifications": [
+    "Google AI/ML Fundamentals",
+    "Meta Front-End Development (Coursera)",
+    "AWS Cloud Practitioner (self-prep track)"
+  ],
+  "interests": [
+    "AI-driven healthcare solutions",
+    "Digital identity systems",
+    "Startup ecosystems",
+    "Graphics and 3D applications",
+    "Community tech training"
+  ]
+}
