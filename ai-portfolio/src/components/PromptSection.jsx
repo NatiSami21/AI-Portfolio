@@ -1,458 +1,305 @@
 // src/components/PromptSection.jsx
-import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import Fuse from "fuse.js";
-import synonyms from "../data/synonyms.json";
+import React, { useState, useEffect, useRef } from 'react';
+import Fuse from 'fuse.js';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Mic, MicOff } from 'lucide-react';
 
-/**
- * PromptSection (Fuse.js + synonyms + two-stage search)
- *
- * - Small-talk classifier (strict, token-level) -> handles "hi", "thanks"
- * - Stage 2: fuzzy KB search (Fuse.js) after expanding query with synonyms
- * - If best score <= threshold -> return best answer
- * - If best score > threshold -> show top-3 "Did you mean...?" clickable suggestions
- * - Preserves UI behavior: typing animation, scrolling on answer, suggestions dropdown, prefill event
- */
+// Import all data sources
+import intentMapping from '../data/intent-mapping.json';
+import knowledgeBase from '../data/knowledge-base.json';
+import projects from '../data/projects.json';
+import skillsData from '../data/skills.json';
+import synonyms from '../data/synonyms.json';
+import testimonials from '../data/testimonials.json';
+import bio from '../data/bio.json';
 
-export default function PromptSection() {
-  const [messages, setMessages] = useState([
-    {
-      from: "saba",
-      text: "👋 Hi I’m Saba. Ask me anything about his projects, or try a suggested question above.",
-    },
-  ]);
+// Fuse.js configuration
+const fuseOptions = { includeScore: true, threshold: 0.3, minMatchCharLength: 2 };
 
-  const [input, setInput] = useState("");
-  const [placeholder, setPlaceholder] = useState(
-    "Ask about Nati’s projects, skills, or experience..."
-  );
-  const [suggestions, setSuggestions] = useState([]);
-  const [knowledgeBase, setKnowledgeBase] = useState(null);
-  const [isTyping, setIsTyping] = useState(false);
+// Fuse instances
+const projectFuse = new Fuse(projects, { ...fuseOptions, keys: ['name', 'description', 'problem', 'technologies', 'tags', 'lessons'] });
 
-  const [pendingFollowUps, setPendingFollowUps] = useState([]);
-  const [followUpIndex, setFollowUpIndex] = useState(0);
-  const [lastAnsweredTopic, setLastAnsweredTopic] = useState(null);
+const skillFuse = new Fuse(
+  Object.entries(skillsData).flatMap(([category, items]) =>
+    Array.isArray(items) ? items.map(skill => ({ category, skill })) : []
+  ),
+  { ...fuseOptions, keys: ['skill', 'category'] }
+);
 
-  const [didYouMean, setDidYouMean] = useState([]); // fallback suggestions from Fuse
-  const fuseRef = useRef(null);
-  const docsRef = useRef([]); // flattened docs
+const testimonialFuse = new Fuse(testimonials, { ...fuseOptions, keys: ['testimonial', 'name', 'designation', 'company'] });
+
+const bioFuse = new Fuse([
+  { type: 'summary', content: bio.summary },
+  { type: 'title', content: bio.title },
+  { type: 'location', content: bio.location },
+  ...(bio.education || []).map(edu => ({ type: 'education', content: `${edu.degree} ${edu.institution} ${edu.year}` })),
+  ...(bio.experiences || []).map(exp => ({ type: 'experience', content: `${exp.title} ${exp.company} ${exp.date}` })),
+  ...(bio.entrepreneurship || []).map(ent => ({ type: 'entrepreneurship', content: `${ent.startup} ${ent.focus} ${ent.impact}` }))
+], { ...fuseOptions, keys: ['content'] });
+
+const synonymFuse = new Fuse(
+  Object.entries(synonyms).flatMap(([canonical, variations]) =>
+    Array.isArray(variations) ? variations.map(variation => ({ canonical, variation })) : []
+  ),
+  { ...fuseOptions, keys: ['variation'] }
+);
+
+const intentFuse = new Fuse(
+  Object.entries(intentMapping).flatMap(([intent, patterns]) =>
+    Array.isArray(patterns) ? patterns.map(pattern => ({ intent, pattern })) : []
+  ),
+  { ...fuseOptions, keys: ['pattern'] }
+);
+
+// Utils
+const normalizeText = text => text?.toLowerCase().replace(/[^\w\s]/gi, '').trim() || '';
+
+const expandQueryWithSynonyms = query => {
+  const normalizedQuery = normalizeText(query);
+  const synonymResults = synonymFuse.search(normalizedQuery);
+  if (synonymResults.length > 0) {
+    return synonymResults.map(r => r.item.canonical).join(' ');
+  }
+  return query;
+};
+
+// Response generators
+const generateProjectResponse = project => ({
+  text: `✨ ${project.name}\n\n${project.description}\n\n📌 Problem: ${project.problem}\n🔧 Technologies: ${project.technologies.join(', ')}\n📖 Lessons: ${project.lessons.join(', ')}`,
+  links: project.links ? [
+    project.links.github && { text: "GitHub Repository", url: project.links.github },
+    project.links.demo && { text: "Live Demo", url: project.links.demo }
+  ].filter(Boolean) : [],
+  followUps: [`What challenges did you face on ${project.name}?`, `What was the impact of ${project.name}?`, "Tell me about another project"]
+});
+
+const generateSkillResponse = skillItem => ({
+  text: `✨ ${skillItem.category.charAt(0).toUpperCase() + skillItem.category.slice(1)} Skills:\n${skillsData[skillItem.category].join(', ')}`,
+  followUps: ["Which projects used these technologies?", "What's your experience level with these?", "Do you have DevOps experience?"]
+});
+
+const generateTestimonialResponse = t => ({
+  text: `"${t.testimonial}"\n\n- ${t.name}, ${t.designation} at ${t.company}`,
+  followUps: ["What other testimonials do you have?", "Tell me about your projects", "What are your skills?"]
+});
+
+const generateBioResponse = bioItem => {
+  let text = '', followUps = [];
+  switch (bioItem.type){
+    case 'education': text = `🎓 Education: ${bioItem.content}`; followUps = ["What are your technical skills?", "Tell me about your projects"]; break;
+    case 'experience': text = `💼 Experience: ${bioItem.content}`; followUps = ["What projects did you work on there?", "What are your skills?"]; break;
+    case 'entrepreneurship': text = `🚀 Entrepreneurship: ${bioItem.content}`; followUps = ["What did you learn from this experience?", "What are your technical skills?"]; break;
+    default: text = `👋 ${bio.summary}`; followUps = ["What are your technical skills?", "Tell me about your projects", "What's your education background?"];
+  }
+  return { text, followUps };
+};
+
+const generateDefaultResponse = () => ({
+  text: "I'm not sure I understand. Could you try asking about my skills, projects, experience, or education?",
+  followUps: ["What are your technical skills?", "Tell me about your projects", "What's your startup experience?", "What's your education background?"]
+});
+
+const generateFallbackResponse = suggestions => {
+  let text = "I'm not sure I understand. Did you mean something about:";
+  suggestions.forEach(s => {
+    if (s.type === 'project') text += `\n• ${s.item.name} (project)`;
+    else if (s.type === 'skill') text += `\n• ${s.item.category} skills`;
+  });
+  return {
+    text,
+    followUps: suggestions.slice(0,3).map(s => s.type==='project'?`Tell me about ${s.item.name}`:`What are your ${s.item.category} skills?`)
+  };
+};
+
+// Main response logic
+const generateResponse = query => {
+  const normalizedQuery = normalizeText(query);
+  const expandedQuery = expandQueryWithSynonyms(normalizedQuery);
+
+  // Small talk
+  const smallTalks = ['hi','hello','hey','thanks','thank you','bye','goodbye'];
+  if (smallTalks.includes(expandedQuery)){
+    if (['hi','hello','hey'].includes(expandedQuery)) return { text:"Hello! I'm Saba, Nati's AI portfolio assistant. How can I help you today?", followUps:["What are Nati's technical skills?", "Tell me about his projects", "What's his startup experience?"] };
+    if (expandedQuery.includes('thank')) return { text:"You're welcome! Anything else you'd like to know?", followUps:["What are his strongest technical skills?", "Tell me about his education", "Tell me about his projects"] };
+    return { text:"It was nice chatting! Ask me about Nati's skills or projects.", followUps:["What are Nati's technical skills?", "Tell me about his projects", "What's his startup experience?"] };
+  }
+
+  // Intent matching
+  const intentResults = intentFuse.search(expandedQuery);
+  if (intentResults.length && intentResults[0].score < 0.4){
+    const intent = intentResults[0].item.intent;
+    if (intent==='project_inquiry'){
+      const res = projectFuse.search(expandedQuery);
+      if (res.length) return generateProjectResponse(res[0].item);
+    }
+    if (intent==='skill_inquiry'){
+      const res = skillFuse.search(expandedQuery);
+      if (res.length) return generateSkillResponse(res[0].item);
+    }
+    return generateDefaultResponse();
+  }
+
+  // Fuse across all data
+  const allResults = [
+    ...projectFuse.search(expandedQuery).map(r=>({type:'project', item:r.item, score:r.score})),
+    ...skillFuse.search(expandedQuery).map(r=>({type:'skill', item:r.item, score:r.score})),
+    ...testimonialFuse.search(expandedQuery).map(r=>({type:'testimonial', item:r.item, score:r.score})),
+    ...bioFuse.search(expandedQuery).map(r=>({type:'bio', item:r.item, score:r.score}))
+  ].filter(r => r.item)
+   .sort((a,b)=>a.score - b.score);
+
+  if (allResults.length>0 && allResults[0].score < 0.5){
+    const best = allResults[0];
+    switch(best.type){
+      case 'project': return generateProjectResponse(best.item);
+      case 'skill': return generateSkillResponse(best.item);
+      case 'testimonial': return generateTestimonialResponse(best.item);
+      case 'bio': return generateBioResponse(best.item);
+    }
+  }
+
+  return generateFallbackResponse(allResults.slice(0,3));
+};
+
+// Component
+const PromptSection = () => {
+  const [messages,setMessages] = useState([]);
+  const [input,setInput] = useState('');
+  const [isTyping,setIsTyping] = useState(false);
+  const [suggestions,setSuggestions] = useState([]);
+  const [showSuggestions,setShowSuggestions] = useState(false);
+  const [placeholderIndex,setPlaceholderIndex] = useState(0);
+  const [lastQuery,setLastQuery] = useState('');
+  const [isListening,setIsListening] = useState(false);
+  const [conversationContext,setConversationContext] = useState({});
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const recognitionRef = useRef(null);
 
-  // small-talk tokens (strict)
-  const SMALL_TALK = new Set(["hi", "hello", "hey", "thanks", "thank", "yo", "good", "morning", "evening"]);
-  const smallTalkResponses = {
-    hi: "👋 Hello! I’m Saba, Nati’s AI-powered portfolio assistant. Ask me anything!",
-    hello: "Hi there! Ask me about Nati’s projects or skills.",
-    thanks: "You’re welcome! 😄 Want to know more about Nati’s achievements?",
-    thank: "Happy to help! 😊 Any other question about Nati?"
-  };
+  const placeholders = [
+    "Which projects used MERN stack?",
+    "What problem did MedHub Ethiopia solve?",
+    "Does Nati know CI/CD practices?",
+    "What are his strongest frontend skills?",
+    "Tell me about his startup experience"
+  ];
 
-  // --- Utility helpers ---
-  const tokensOf = (text = "") =>
-    String(text)
-      .toLowerCase()
-      .replace(/[\u2018\u2019\u201c\u201d]/g, "'")
-      .replace(/[^\w\s-]/g, " ")
-      .split(/\s+/)
-      .filter(Boolean);
-
-  const levenshtein = (a = "", b = "") => {
-    const m = a.length; const n = b.length;
-    if (m === 0) return n;
-    if (n === 0) return m;
-    const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
-    for (let i = 0; i <= m; i++) dp[i][0] = i;
-    for (let j = 0; j <= n; j++) dp[0][j] = j;
-    for (let i = 1; i <= m; i++) {
-      for (let j = 1; j <= n; j++) {
-        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-        dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
-      }
+  // Speech recognition
+  useEffect(()=>{
+    if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous=false;
+      recognitionRef.current.interimResults=false;
+      recognitionRef.current.lang='en-US';
+      recognitionRef.current.onresult = event => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        handleQuery(transcript);
+      };
+      recognitionRef.current.onend = ()=>setIsListening(false);
+      recognitionRef.current.onerror = ()=>setIsListening(false);
     }
-    return dp[m][n];
-  };
+  },[]);
 
-  // apply synonyms: if any synonym appears in tokens, add canonical key to expanded query
-  const expandQueryWithSynonyms = (rawQuery) => {
-    const toks = tokensOf(rawQuery);
-    const additions = [];
-    for (const canonical of Object.keys(synonyms)) {
-      const synList = synonyms[canonical] || [];
-      // if any synonym token present in query tokens, add canonical keyword
-      if (synList.some((s) => toks.includes(s.toLowerCase()))) additions.push(canonical);
-    }
-    return `${rawQuery} ${additions.join(" ")}`.trim();
-  };
-
-  // fetch KB and init fuse
-  useEffect(() => {
-    fetch("/knowledge-base.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setKnowledgeBase(data);
-        // flatten arrays into docs
-        const docs = [];
-        Object.entries(data).forEach(([category, value]) => {
-          if (Array.isArray(value)) {
-            value.forEach((item, idx) => {
-              docs.push({ ...item, __category: category, __id: `${category}-${idx}` });
-            });
-          } else if (value && typeof value === "object") {
-            // profile or single object
-            docs.push({ ...value, __category: category, __id: category });
-          }
-        });
-        docsRef.current = docs;
-        // fuse options: weight important fields
-        const options = {
-          includeScore: true,
-          threshold: 0.35, // tune: lower => stricter; 0.35 is a good start
-          ignoreLocation: true,
-          keys: [
-            { name: "name", weight: 0.9 },
-            { name: "title", weight: 0.9 },
-            { name: "company_name", weight: 0.8 },
-            { name: "description", weight: 0.6 },
-            { name: "technologies", weight: 0.85 },
-            { name: "tags.name", weight: 0.8 },
-            { name: "skills", weight: 0.8 },
-            { name: "skills_gained", weight: 0.8 },
-            { name: "problems_solved", weight: 0.8 },
-            { name: "lessons_gained", weight: 0.6 },
-            { name: "headline", weight: 0.6 }
-          ],
-        };
-        fuseRef.current = new Fuse(docs, options);
-      })
-      .catch((err) => {
-        console.error("Error loading knowledge base:", err);
-      });
-  }, []);
-
-  // Prefill event (unchanged behavior)
-  useEffect(() => {
-    const handler = (e) => {
-      const q = e.detail;
-      setInput(q || "");
-      const el = document.getElementById("prompt-section");
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(() => inputRef.current?.focus(), 300);
+  // Keyboard shortcuts
+  useEffect(()=>{
+    const handleKeyDown = e=>{
+      if(e.key==='/' && !e.shiftKey){ e.preventDefault(); inputRef.current?.focus(); }
+      else if(e.key==='ArrowUp' && lastQuery && input===''){ e.preventDefault(); setInput(lastQuery); }
     };
-    window.addEventListener("prefill-query", handler);
-    return () => window.removeEventListener("prefill-query", handler);
-  }, []);
+    document.addEventListener('keydown',handleKeyDown);
+    return ()=>document.removeEventListener('keydown',handleKeyDown);
+  },[lastQuery,input]);
 
-  // simulate typing & append message
-  const simulateTyping = (text, onComplete) => {
+  // Rotate placeholders
+  useEffect(()=>{
+    const interval = setInterval(()=>setPlaceholderIndex(prev=>(prev+1)%placeholders.length),3000);
+    return ()=>clearInterval(interval);
+  },[]);
+
+  // Scroll messages
+  useEffect(()=>{ messagesEndRef.current?.scrollIntoView({behavior:'smooth'}); },[messages]);
+
+  // Suggestions
+  useEffect(()=>{
+    if(input.length>1){
+      const lower=input.toLowerCase();
+      const matched=[];
+      projectFuse.search(lower).slice(0,2).forEach(r=>matched.push(`Tell me about ${r.item.name}`));
+      skillFuse.search(lower).slice(0,2).forEach(r=>matched.push(`What ${r.item.category} skills does Nati have?`));
+      setSuggestions(matched);
+      setShowSuggestions(matched.length>0);
+    } else setShowSuggestions(false);
+  },[input]);
+
+  const startListening = ()=>{ recognitionRef.current?.start(); setIsListening(true); };
+  const stopListening = ()=>{ recognitionRef.current?.stop(); setIsListening(false); };
+  const handleInputChange = e=>setInput(e.target.value);
+  const handleSuggestionClick = s=>{ setInput(s); setShowSuggestions(false); handleQuery(s); };
+  const handleSubmit = e=>{ e.preventDefault(); if(input.trim()) handleQuery(input); };
+
+  const handleQuery = query=>{
+    const userMessage = { sender:'user', text:query };
+    setMessages(prev=>[...prev,userMessage]);
+    setLastQuery(query);
+    setInput('');
+    setShowSuggestions(false);
     setIsTyping(true);
-    let i = 0;
-    setMessages(prev => [...prev, { from: "saba", text: "" }]);
-    const interval = setInterval(() => {
-      const current = text.slice(0, i);
-      setMessages(prev => {
-        const copy = prev.slice(0, prev.length - 1);
-        return [...copy, { from: "saba", text: current }];
-      });
-      i++;
-      if (i > text.length) {
-        clearInterval(interval);
-        setIsTyping(false);
-        setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }), 50);
-        if (onComplete) onComplete();
-      }
-    }, 16);
+    setTimeout(()=>{
+      const response = generateResponse(query, conversationContext);
+      const sabaMessage = { sender:'saba', ...response };
+      setMessages(prev=>[...prev,sabaMessage]);
+      setIsTyping(false);
+      if(response.context) setConversationContext(prev=>({...prev,...response.context}));
+    },500);
   };
 
-  // Build answer from a known item (used for direct suggestion or fuzzy best result)
-  const buildAnswerFromItem = (item, category) => {
-    const title = item.title || item.name || item.company_name || "Item";
-    let out = `✨ ${title}\n\n`;
-    if (item.headline) out += `${item.headline}\n\n`;
-    if (item.description) out += `${item.description}\n\n`;
-    if (item.problems_solved) out += `Problems solved: ${item.problems_solved.join(", ")}\n\n`;
-    if (item.technologies) out += `Technologies: ${item.technologies.join(", ")}\n`;
-    if (item.skills || item.skills_gained) out += `Skills: ${(item.skills || item.skills_gained).join(", ")}\n`;
-    if (item.lessons_gained) out += `Lessons: ${item.lessons_gained.join(", ")}\n`;
-    if (item.impact) out += `Impact: ${item.impact}\n`;
-    if (item.source_code_link) out += `🔗 Link: ${item.source_code_link}\n`;
-    if (item.media) out += `🎬 Media: ${item.media}\n`;
-
-    // follow-ups
-    const followUps = [];
-    if (category === "projects") {
-      followUps.push("How did he solve performance or scaling issues in this project?");
-      followUps.push("Show the project's source or demo link?");
-    } else if (category === "experiences") {
-      followUps.push("What skills did he gain in this role?");
-      followUps.push("Which projects came out of this experience?");
-    } else {
-      followUps.push("Would you like more examples or code links?");
-    }
-
-    // set last answered context
-    setLastAnsweredTopic({ category, item });
-    return { text: out, followUps };
-  };
-
-  // Small-talk classifier (strict): only allow small talk when query is very short and tokens are small-talk tokens
-  const detectSmallTalk = (query) => {
-    const toks = tokensOf(query);
-    if (toks.length === 0) return null;
-    // if query contains only small-talk tokens or is 1 token and matches smalltalk -> respond
-    if (toks.length <= 3) {
-      for (const t of toks) {
-        if (SMALL_TALK.has(t)) {
-          // pick canonical key (first match)
-          for (const k of Object.keys(smallTalkResponses)) {
-            if (t === k || levenshtein(t, k) <= 1) return smallTalkResponses[k];
-          }
-        }
-      }
-    }
-    return null;
-  };
-
-  // Main search function using Fuse + synonyms expansion, returns { type: "best"|"fallback"|"none", data }
-  const runFuzzySearch = (query) => {
-    if (!fuseRef.current) return { type: "none" };
-    // expand with synonyms
-    const expanded = expandQueryWithSynonyms(query);
-
-    const results = fuseRef.current.search(expanded);
-    if (!results || results.length === 0) return { type: "none" };
-
-    // Best score (lower is better). We'll use threshold of 0.35 from options.
-    const best = results[0];
-    // If best.score <= 0.35 treat as confident hit (exact enough)
-    if (typeof best.score === "number" && best.score <= 0.35) {
-      return { type: "best", data: best.item };
-    }
-
-    // Otherwise return top-3 as fallback suggestions
-    const top3 = results.slice(0, 3).map((r) => r.item);
-    return { type: "fallback", data: top3 };
-  };
-
-  // Follow-up trigger (yes / tell me more)
-  const handleFollowUpTrigger = (userText) => {
-    const t = (userText || "").toLowerCase().trim();
-    if (!pendingFollowUps || pendingFollowUps.length === 0) return false;
-    if (["yes", "y", "tell me more", "more", "please"].includes(t)) {
-      const next = pendingFollowUps[followUpIndex % pendingFollowUps.length];
-      setFollowUpIndex(i => i + 1);
-      // If follow-up refers to performance and we have lastAnsweredTopic, craft context-aware answer
-      if (lastAnsweredTopic && next.toLowerCase().includes("performance")) {
-        // if project has performance data
-        const perf = lastAnsweredTopic.item?.performance;
-        const text = perf ? `🚀 Performance improvements: ${perf}` : `🚀 He optimized queries, lazy-loaded UI, and added caching to improve performance.`;
-        setTimeout(() => handleSend(text), 200);
-      } else {
-        setTimeout(() => handleSend(next), 200);
-      }
-      return true;
-    }
-    return false;
-  };
-
-  // Build answer by query (stage1 small talk then stage2 fuzzy)
-  const buildAnswer = (query) => {
-    // 1) small talk (strict)
-    const st = detectSmallTalk(query);
-    if (st) return { text: st, followUps: [] };
-
-    // 2) check direct suggested mappings (optional - you can add more keys)
-    const qLower = query.toLowerCase().trim();
-    // exact canonical mapping check
-    if (["which projects used mern stack?", "which projects used mern", "mern projects"].includes(qLower)) {
-      // find MERN projects
-      const mproj = (docsRef.current || []).filter(d =>
-        Array.isArray(d.technologies) && d.technologies.some(t => String(t).toLowerCase().includes("mern") || String(t).toLowerCase().includes("mongo"))
-      );
-      if (mproj.length) {
-        return {
-          text: `📌 Projects using MERN: ${mproj.map(p => p.name || p.title).join(", ")}`,
-          followUps: [`Do you want details on ${mproj[0].name || mproj[0].title}?`]
-        };
-      }
-    }
-
-    // 3) run Fuse fuzzy search
-    const res = runFuzzySearch(query);
-    if (res.type === "none") {
-      return {
-        text: `🤔 I couldn't find a direct match for "${query}". Try: "Tell me about MedHub Ethiopia", "What are his frontend skills?", or "Show testimonials".`,
-        followUps: ["Would you like a list of top projects?", "Do you want his top skills?"]
-      };
-    }
-
-    if (res.type === "best") {
-      const item = res.data;
-      // find its originating category
-      const category = item.__category || "projects";
-      const ans = buildAnswerFromItem(item, category);
-      return ans;
-    }
-
-    // fallback: did you mean (top 3)
-    if (res.type === "fallback") {
-      const top = res.data;
-      setDidYouMean(top);
-      const choices = top.map((t, i) => `${i + 1}. ${t.name || t.title || t.company_name || "Item"}`).join("\n");
-      return {
-        text: `I found a few close matches — did you mean one of these?\n\n${choices}\n\nClick any suggestion below or type its name.`,
-        followUps: []
-      };
-    }
-  };
-
-  // handle suggestion selection from Did-you-mean list
-  const handleDidYouMeanSelect = (item) => {
-    // push user message
-    const label = item.name || item.title || item.company_name || "Item";
-    setMessages(prev => [...prev, { from: "user", text: label }]);
-    // create answer and simulate
-    const answer = buildAnswerFromItem(item, item.__category);
-    setDidYouMean([]);
-    setPendingFollowUps(answer.followUps || []);
-    setFollowUpIndex(0);
-    setTimeout(() => simulateTyping(answer.text), 80);
-    setInput("");
-  };
-
-  // main send handler
-  const handleSend = (raw) => {
-    const msgInput = (raw || "").trim();
-    if (!msgInput) return;
-
-    setMessages(prev => [...prev, { from: "user", text: msgInput }]);
-    setLastAnsweredTopic((prev) => prev); // noop to keep state stable
-
-    if (handleFollowUpTrigger(msgInput)) {
-      setInput("");
-      return;
-    }
-
-    const answerObj = buildAnswer(msgInput);
-    setPendingFollowUps(answerObj.followUps || []);
-    setFollowUpIndex(0);
-
-    setDidYouMean([]); // clear previous did-you-mean
-    setTimeout(() => simulateTyping(answerObj.text), 120);
-    setInput("");
-    setSuggestions([]);
-  };
-
-  // Live suggestions under input (unchanged behavior)
-  useEffect(() => {
-    if (!input) {
-      setSuggestions([]);
-      return;
-    }
-    const q = input.toLowerCase();
-    const rotating = [
-      "Which projects used MERN stack?",
-      "What problem did MedHub Ethiopia solve?",
-      "Does Nati know CI/CD practices?",
-      "What are his strongest frontend skills?",
-      "Which databases does he know?"
-    ];
-    const s1 = rotating.filter((r) => r.toLowerCase().includes(q)).slice(0, 3);
-    const s2 = (docsRef.current || [])
-      .map((p) => `Tell me about ${p.name || p.title || p.company_name}`)
-      .filter((s) => s.toLowerCase().includes(q))
-      .slice(0, 3);
-    setSuggestions([...s1, ...s2].slice(0, 5));
-  }, [input]);
-
-  // suggestion click handler
-  const onSuggestionClick = (s) => {
-    setInput(s);
-    inputRef.current?.focus();
-  };
-
-  // keyboard shortcuts: / focus, arrowUp recall last question
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "/") {
-        e.preventDefault();
-        inputRef.current?.focus();
-      } else if (e.key === "ArrowUp") {
-        const last = messages.slice().reverse().find(m => m.from === "user");
-        if (last) {
-          setInput(last.text);
-          inputRef.current?.focus();
-        }
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [messages]);
-
-  // auto-scroll when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages, isTyping]);
+  const handleFollowUp = f=>{ setInput(f); handleQuery(f); };
 
   return (
-    <section id="prompt-section" className="relative w-full min-h-screen bg-primary">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* header */}
-        <div className="p-4 bg-black-200 rounded-xl mb-4 shadow-card flex items-center justify-between">
-          <div>
-            <div className="text-white font-semibold">💼 Ask Saba — Nati's AI Portfolio Assistant</div>
-            <div className="text-sm text-gray-400">Type a question or pick a suggested prompt.</div>
+    <section id="prompt-section" className="min-h-screen bg-gray-900 py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-gray-800 rounded-lg shadow-xl overflow-hidden mb-6">
+          <div className="h-96 overflow-y-auto p-4 space-y-4">
+            {messages.length===0 ? (
+              <div className="text-center text-gray-400 py-12">
+                <p>Ask me anything about Nati's skills, projects, or experience!</p>
+                <p className="text-sm mt-2">Try asking about his technical skills, projects, or background.</p>
+              </div>
+            ) : messages.map((m,i)=>(
+              <div key={i} className={`flex ${m.sender==='user'?'justify-end':'justify-start'}`}>
+                <div className={`max-w-xs md:max-w-md rounded-lg p-4 ${m.sender==='user'?'bg-blue-600 text-white':'bg-gray-700 text-gray-100'}`}>
+                  {m.text.split('\n').map((line,j)=><p key={j}>{line}</p>)}
+                  {m.links?.length>0 && <div className="mt-2">{m.links.map((link,j)=><a key={j} href={link.url} target="_blank" rel="noopener noreferrer" className="inline-block bg-gray-800 hover:bg-gray-900 text-white text-sm px-3 py-1 rounded mr-2 mt-1">{link.text}</a>)}</div>}
+                  {m.followUps?.length>0 && <div className="mt-3 pt-3 border-t border-gray-600">
+                    <p className="text-sm font-medium mb-2">Follow-up questions:</p>
+                    <div className="flex flex-wrap gap-2">{m.followUps.slice(0,3).map((f,j)=><button key={j} onClick={()=>handleFollowUp(f)} className="text-xs bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded">{f}</button>)}</div>
+                  </div>}
+                </div>
+              </div>
+            ))}
+            {isTyping && <div className="flex justify-start"><div className="bg-gray-700 text-gray-100 rounded-lg p-4"><div className="flex space-x-1"><div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div><div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay:'0.2s'}}></div><div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay:'0.4s'}}></div></div></div></div>}
+            <div ref={messagesEndRef}/>
           </div>
-          <div className="text-xs px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 text-white">Powered by Saba 🤖</div>
-        </div>
-
-        {/* messages window */}
-        <div className="bg-black-100 rounded-xl p-6 min-h-[40vh] max-h-[60vh] overflow-auto mb-4">
-          {messages.map((m, i) => (
-            <div key={i} className={`mb-4 flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
-              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18, delay: i * 0.02 }} className={`px-4 py-3 rounded-2xl max-w-[85%] whitespace-pre-wrap break-words ${m.from === "user" ? "bg-blue-600 text-white" : "bg-gray-700 text-green-200"}`}>
-                {m.text}
-              </motion.div>
-            </div>
-          ))}
-
-          {/* Did you mean suggestions: show as interactive chips under messages */}
-          {didYouMean && didYouMean.length > 0 && (
-            <div className="mb-4 flex gap-2 flex-wrap">
-              {didYouMean.map((d, idx) => (
-                <button key={idx} onClick={() => handleDidYouMeanSelect(d)} className="px-3 py-1 rounded bg-white/6 text-white hover:bg-white/10">
-                  {d.name || d.title || d.company_name || `Suggestion ${idx + 1}`}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {isTyping && <div className="text-gray-400 italic">Saba is typing…</div>}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* input + suggestions */}
-        <form onSubmit={(e) => { e.preventDefault(); handleSend(input); }} className="relative">
-          <div className="flex items-center gap-3">
-            <input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} placeholder={placeholder} className="flex-1 px-4 py-3 rounded-2xl bg-black/60 border border-white/6 text-white focus:outline-none focus:ring-2 focus:ring-[#915EFF]" />
-            <button type="submit" className="px-4 py-2 rounded-lg bg-[#915EFF] hover:bg-[#7a3fe0] text-white font-medium">Send</button>
+          <div className="border-t border-gray-700 p-4 bg-gray-800">
+            <form onSubmit={handleSubmit} className="flex items-center">
+              <div className="relative flex-grow">
+                <input ref={inputRef} type="text" value={input} onChange={handleInputChange} placeholder={placeholders[placeholderIndex]} className="w-full bg-gray-900 text-white placeholder-gray-500 rounded-l-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" aria-label="Ask a question"/>
+                <AnimatePresence>
+                  {showSuggestions && <motion.div initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} className="absolute bottom-full left-0 right-0 mb-2 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10">{suggestions.map((s,i)=><button key={i} type="button" onClick={()=>handleSuggestionClick(s)} className="w-full text-left px-4 py-2 hover:bg-gray-700 text-white">{s}</button>)}</motion.div>}
+                </AnimatePresence>
+              </div>
+              <button type="button" onClick={isListening?stopListening:startListening} className={`px-3 py-3 ${isListening?'bg-red-500':'bg-gray-700'} text-white`} aria-label={isListening?'Stop listening':'Start voice input'}>{isListening?<MicOff size={20}/>:<Mic size={20}/>}</button>
+              <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white rounded-r-lg px-4 py-3" aria-label="Send message"><Send size={20}/></button>
+            </form>
+            <div className="mt-2 text-xs text-gray-500 flex justify-between"><span>Press / to focus input, ↑ for previous question</span><span>Powered by Saba 🤖</span></div>
           </div>
-
-          {suggestions.length > 0 && (
-            <div className="mt-2 bg-black/70 border border-white/6 rounded-lg shadow-lg text-sm overflow-hidden">
-              {suggestions.map((s, i) => (
-                <div key={i} onClick={() => onSuggestionClick(s)} className="px-4 py-2 hover:bg-white/5 cursor-pointer">{s}</div>
-              ))}
-            </div>
-          )}
-
-          {pendingFollowUps.length > 0 && (
-            <div className="mt-3 text-sm text-gray-300 italic">Suggested next: <strong>{pendingFollowUps[0]}</strong> — reply <code>yes</code> to continue.</div>
-          )}
-        </form>
+        </div>
       </div>
     </section>
   );
-}
+};
+
+export default PromptSection;

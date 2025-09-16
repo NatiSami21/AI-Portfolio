@@ -1,19 +1,51 @@
-{
-  "testimonials": [
-    {
-      "testimonial": "The Wolayita Zone Science and IT Web-App improved our tech maintenance workflows with an intuitive system. Excellent work!",
-      "name": "Mr. Netsanet",
-      "company": "Wolayita Zone Science and IT Office"
-    },
-    {
-      "testimonial": "The St. Mary Finance System transformed how we manage parish finances. Reliable, secure, and efficient.",
-      "name": "Dn. Zenebe",
-      "company": "St. Mary Church Parish Council"
-    },
-    {
-      "testimonial": "Wa-Leba+ provided us with real-time monitoring and improved security. Very impressive delivery.",
-      "name": "Mr. Samuel",
-      "company": "Sami Computer Center"
-    }
-  ]
-}
+[
+  {
+    "testimonial": "Natinael’s MedHub Ethiopia platform has completely transformed our patient management processes. The system is intuitive, reliable, and integrates seamlessly with national ID verification. Truly exceptional work!",
+    "name": "Dr. Fikru Abebe",
+    "designation": "Hospital Director",
+    "company": "Addis Ababa General Hospital",
+    "media": "tstm1"
+  },
+  {
+    "testimonial": "Working with Natinael on the Wolayita Zone Science and IT Web-App was a pleasure. He delivered a high-quality solution with real-time video consultations and excellent UI/UX design.",
+    "name": "Mr. Netsanet",
+    "designation": "Director",
+    "company": "Wolayita Zone Science and IT Office",
+    "media": "tstm2"
+  },
+  {
+    "testimonial": "The St. Mary Finance Management System streamlined all our financial processes. Natinael demonstrated deep technical expertise and project management skills throughout.",
+    "name": "Dn. Zenebe",
+    "designation": "Finance Head",
+    "company": "St. Mary Church Parish Council",
+    "media": "tstm3"
+  },
+  {
+    "testimonial": "Natinael’s AI-driven surveillance solution Wa-Leba+ ensured our premises are monitored efficiently with advanced analytics. The integration of computer vision and real-time alerts is top-notch.",
+    "name": "Mr. Samuel",
+    "designation": "Owner",
+    "company": "Sami Computer Center",
+    "media": "tstm4"
+  },
+  {
+    "testimonial": "The Bible Trivia Game and Offline Book Store App demonstrate Natinael’s versatility and attention to user engagement. His ability to deliver practical solutions for low-resource environments is impressive.",
+    "name": "Dn. Tigistu",
+    "designation": "Educational Coordinator",
+    "company": "Otona Debre Tsion Church & WCU",
+    "media": "tstm5"
+  },
+  {
+    "testimonial": "Natinael’s contributions to eKYC integration with MyFayda were instrumental. His work on secure, scalable, and compliant identity verification systems is highly commendable.",
+    "name": "Ms. Helena Meles",
+    "designation": "Project Lead",
+    "company": "MyFayda Digital ID",
+    "media": "tstm6"
+  },
+  {
+    "testimonial": "As a startup founder and technical lead, Natinael combines business insight with full-stack development expertise. His leadership and execution on multiple projects are remarkable.",
+    "name": "Mr. Dawit Tadesse",
+    "designation": "Entrepreneur & Mentor",
+    "company": "Ethiopian Startup Hub",
+    "media": "tstm7"
+  }
+]
